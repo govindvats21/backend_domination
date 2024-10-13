@@ -1,0 +1,169 @@
+//* CRUD OPERATIONS IN MONGODB
+
+// insert opertations 
+
+//? 3: crete (Inserting the documents in collection)
+//!methods like insert() and save() are being deprecated in favor of more explicit methods like insertOne() and insertMany()
+
+//? 1.a insertOne(): This method inserts a single document into the collection.
+// db.product.insertOne({ name: "vinod", age: 29 });
+
+//? 1.b insertMany(): This method inserts an array of documents into the collection.
+//! IMP - Argument "docs" must be an array of documents (use array always)
+//db.product.insertMany([{'name':'vinod', 'age':29}, {'name':'arjun', 'age':'30'}])
+
+//? Important when to use quotes and when to not
+//Special Characters: If your field name contains special characters, spaces, or starts with a numeric digit, using quotes becomes necessary.
+// Field name with spaces
+// db.grades.find({"course name": "Math"})
+// Field name starting with a digit
+// db.grades.find({"1st_place": true})
+
+//Reserved Words: If your field name is a reserved keyword in MongoDB (e.g., $group, $sum, etc.), you need to use quotes to distinguish it from the reserved keyword
+// we will see when we will see comparison operator
+
+//? 1.c Ordered Inserts vs Unordered Inserts
+//In MongoDB, "ordered" and "unordered" refer to the behavior of a bulk write operation when multiple operations are included in a single batch. {ordered:1 or -1} By default it's true.  If any individual operation fails, MongoDB stops processing further operations in the batch and returns an error.
+
+//? it's a example of ordered Inserts after the 2nd execution it will stop
+// db.product.insertMany([
+//   { name: "vinod", age: 29 },
+//   { _id: ObjectId("64cb3ea5be4cb31d576182a3"), name: "sujan" },
+//   { name: "naran", age: "30" },
+// ]);
+
+//? Unordered Inserts
+// db.product.insertMany(
+//   [
+//     { name: "vinod", age: 29 },
+//     { _id: ObjectId("64cb3ea5be4cb31d576182a3"), name: "sujan" },
+//     { name: "ram", age: "30" },
+//   ],
+//   { ordered: false }
+// );
+//In this example, even though the 2nd operation fails due to the duplicate _id, MongoDB continues processing and returns a result object with information about both successful and failed operations.
+
+//? 3: Case Sensitivity in MongoDB
+//In MongoDB, collection names are case-sensitive. Therefore, db.Product and db.product are considered as two different collections. The same rule applies to field names within documents.
+// db.Product.insertOne({name:"thapa",age:30})
+// vs
+// db.product.insertOne({name:"thapa",age:30})
+// the output will be two collections 🤯
+// dbproduct> show collections
+// product
+// Product
+
+
+
+//* Read Operations
+
+//? Read Operations
+
+//* 2.a find(): The find() method is the most common way to retrieve documents from a collection. It allows you to specify query conditions to filter the documents you want to retrieve.
+//? syntax => db.collection_name.find({key:value})
+// db.product.find({ name: "vinod" });
+// db.product.find({'age':29})
+
+//* 2.b findOne(): The findOne() method returns a single document that matches the specified query condition. It's useful when you only need to retrieve one document.
+//? syntax => db.collection_name.findOne({key:value})
+// db.product.findOne({ age: 29 });
+// db.product.findOne({'name':'vinod'})
+
+//* MONGOIMPORT
+// Now I will show How to import data from json file
+//? mongoimport E:\\mongo\products.json -d shop -c products
+
+// mongoimport E:\\mongo\products.json -d shop -c products --jsonArray
+
+//! Failed: error reading separator after document #1: bad JSON array format - found no opening bracket '[' in input source
+
+// mongoimport E:\mongo\mongo_json\sales.json -d tshop -c sales --jsonArray
+
+// mongoexport -c sales -d shop -o E:\mongo\sales1.json
+
+// mongoexport --collection=sales --db=shop -out=E:\mongo\sales.json
+
+
+//* Updates
+
+//? 1: Updating a Single Field:
+//*  db.collectionName.updateOne(
+//    { _id: ObjectId("12345") },
+//   { $set: { fieldName: "new value" } }
+//  );
+
+//? Update the price value = 45 in a products collections, where the _id = ObjectId("64c2363be32f4a51b19b9271")
+
+//? Update the isFeatures value = true in a products collections, where the name = Designer Handbag
+
+//* UpdateMany
+//? Update all the isFeatures value = true in a products collections, where the  price = 120
+
+//* Updating multiple fields in a document
+// db.collectionName.updateOne(
+//   { _id: ObjectId("12345") },
+//   {
+//     $set: {
+//       field1: "new value 1",
+//       field2: "new value 2",
+//     },
+//   }
+// );
+
+//? Update the price = 154 and isFeatures = false fields from the products collections where the name =  Unbranded Frozen Chicken.
+
+//* Renaming a field in a document.
+// syntax:  db.collectionName.updateOne(
+//     { _id: ObjectId("12345") },
+//     { $rename: { oldFieldName: "newFieldName" } }
+//   );
+//? Rename the products collection isFeatured field to isFeature, where the price = 123
+
+//* Adding a new field in a document
+// db.collectionName.updateOne(
+//     { _id: ObjectId("12345") },
+//     { $set: { newField: "new value" } }
+//   );
+
+//* Removing or Deleting the Field in a document
+// To remove a field from documents in MongoDB, you can use the $unset update operator.
+// db.collectionName.updateOne(
+//     { _id: ObjectId("12345") },
+//     { $unset: { fieldName: 1 } }
+//   );
+
+//* Update Embedded Documents
+//? How do you add a new element to an array using the $push operator?
+// db.collectionName.updateOne(
+//     { _id: ObjectId("12345") },
+//     { $push: { arrayField: "new element" } }
+//   );
+
+//? Popping from an Array: Removing the last element from an array in a document.
+// Syntax:  db.collectionName.updateOne(
+//   { _id: ObjectId("12345") },
+//   { $pop: { arrayField: 1 } }
+// );
+
+//? Updating a field within an embedded document.
+
+//? Update the text value within an comments array = "Awesome article!", where the id=7 & username=alice.
+
+// Consider this part of the query: 'comments.$.text': 'Awesome Thapa!'
+
+// comments is the name of the array field.
+// $ is the positional operator, and it refers to the index of the array element that matches the query condition.
+// text is the field within the specific comment element that you want to update.
+
+
+
+//* Delete
+//? In MongoDB, the DELETE operations are used to remove documents from a collection. There are two main methods to perform deletion: deleteOne() and deleteMany().
+
+//* Delete a Single Document:
+//? syntax : db.collectionName.deleteOne({ _id: ObjectId("12345") });
+// db.sales.deleteOne({ _id: 1 });
+
+//* Delete Multiple Documents:
+//? Syntax: db.collectionName.deleteMany({ field: "value" });
+// db.sales.deleteMany({'price':55})
