@@ -3,6 +3,9 @@ const app = express();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
 
+
+// Bcrypt
+
 app.post("/encrypt", async(req,res)=> {
 let salt = await bcrypt.genSalt(); // genSalt = kitne deep level salt genrate karna hai 
 let hashed = await bcrypt.hash("PlanePassword", salt);
