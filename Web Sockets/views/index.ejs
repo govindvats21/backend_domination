@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <title>Document</title>
+</head>
+
+<body class="flex items-center justify-center h-screen bg-gray-100">
+    
+    <h3 class="message"> </h3>
+
+    <script src="https://cdn.socket.io/4.8.0/socket.io.min.js" integrity="sha384-OoIbkvzsFFQAG88r+IqMAjyOtYDPGO0cqK5HF5Uosdy/zUEGySeAzytENMDynREd" crossorigin="anonymous"></script>
+
+    <script>
+var socket = io();
+
+// socket.emit("abcd", 12)
+// socket.on("defg", (msg)=> {
+//     document.querySelector(".message").innerHTML = msg;
+// });
+
+
+
+socket.emit("typing");
+
+        socket.on('typing', function (data) {
+            console.log(`user is typing ${(data.user)}`)
+
+        })
+    </script>
+</body>
+</html>
